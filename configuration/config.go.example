@@ -1,0 +1,10 @@
+package configuration
+
+type config struct {
+	MySQL struct {
+		Host         string
+		Username     string
+		Password     string
+		DatabaseName string
+	}
+}

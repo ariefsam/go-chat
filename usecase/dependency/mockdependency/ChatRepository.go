@@ -14,3 +14,9 @@ func (m *ChatRepository) Get(filter entity.FilterChat) (chats []entity.Chat) {
 	chats = args.Get(0).([]entity.Chat)
 	return
 }
+
+func (m *ChatRepository) Save(chat entity.Chat) (err error) {
+	args := m.Called(chat)
+	err = args.Error(0)
+	return
+}

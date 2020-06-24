@@ -15,6 +15,7 @@ func TestGetChat(t *testing.T) {
 	filter := entity.FilterChat{}
 	expectedChats := []entity.Chat{
 		entity.Chat{
+			ID:         "01",
 			ReceiverID: "groupIDxxx1",
 			Timestamp:  1500,
 			SenderID:   "userIDxx1",
@@ -22,6 +23,7 @@ func TestGetChat(t *testing.T) {
 			Message:    "Yeyeye",
 		},
 		entity.Chat{
+			ID:         "02",
 			ReceiverID: "groupIDxxx1",
 			Timestamp:  1520,
 			SenderID:   "userIDxx2",
