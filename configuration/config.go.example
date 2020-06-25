@@ -8,3 +8,12 @@ type config struct {
 		DatabaseName string
 	}
 }
+
+var Config config
+
+func init() {
+	Config.MySQL.DatabaseName = "db_test"
+	Config.MySQL.Host = "127.0.0.1"
+	Config.MySQL.Password = "dbpassword"
+	Config.MySQL.Username = "dbusername"
+}

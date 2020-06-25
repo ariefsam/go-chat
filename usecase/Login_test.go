@@ -41,7 +41,7 @@ func TestLogin(t *testing.T) {
 
 		mockUserRepository.On("Save", expectedUserToSave).Return(nil)
 
-		// mockSMSSender.On("Send", phoneNumber, message)
+		// mockSMSSender.On("Send", phoneNumber, message).Return(nil)
 
 		err := u.LoginBySMS(phoneNumber, deviceID)
 		mockUserRepository.AssertCalled(t, "Get", filter)
