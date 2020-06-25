@@ -32,13 +32,13 @@ func TestLogin(t *testing.T) {
 		filter := entity.FilterUser{
 			PhoneNumber: &phoneNumber,
 		}
-		mockUserRepository.On("Get", filter).Return([]entity.User{})
+		mockUserRepository.On("Get", filter).Return([]entity.User{}).Once()
 
 		generatedUserID := "id001"
 		generatedLoginVerificationID := "lp001"
 		mockIDGenerator.On("Generate").Return(generatedUserID).Once()
 		mockIDGenerator.On("Generate").Return(generatedLoginVerificationID).Once()
-		mockIDGenerator.On("GenerateNumberCode", 6).Return(verificationCode)
+		mockIDGenerator.On("GenerateNumberCode", 6).Return(verificationCode).Once()
 
 		expectedMessage := verificationCode + " is your code verification."
 		expectedUserToSave := entity.User{
@@ -46,9 +46,9 @@ func TestLogin(t *testing.T) {
 			PhoneNumber: phoneNumber,
 		}
 
-		mockUserRepository.On("Save", expectedUserToSave).Return(nil)
+		mockUserRepository.On("Save", expectedUserToSave).Return(nil).Once()
 
-		mockSMSSender.On("Send", phoneNumber, expectedMessage).Return(nil)
+		mockSMSSender.On("Send", phoneNumber, expectedMessage).Return(nil).Once()
 
 		var expectedCurrentTimestamp int64
 		expectedCurrentTimestamp = 100
@@ -63,11 +63,54 @@ func TestLogin(t *testing.T) {
 			ExpiredTimestamp: expectedExpiredTimestamp,
 			VerificationCode: verificationCode,
 		}
-		mockLoginVerificationRepository.On("Save", expectedLoginVerificationToSave).Return(nil)
+		mockLoginVerificationRepository.On("Save", expectedLoginVerificationToSave).Return(nil).Once()
 
 		err := u.LoginBySMS(phoneNumber, deviceID)
 		mockUserRepository.AssertCalled(t, "Get", filter)
 		mockUserRepository.AssertCalled(t, "Save", expectedUserToSave)
+		mockLoginVerificationRepository.AssertCalled(t, "Save", expectedLoginVerificationToSave)
+		mockSMSSender.AssertCalled(t, "Send", phoneNumber, expectedMessage)
+
+		assert.NoError(t, err)
+	})
+
+	t.Run("ExistingUser user", func(t *testing.T) {
+		mockIDGenerator = mockdependency.IDGenerator{}
+		filter := entity.FilterUser{
+			PhoneNumber: &phoneNumber,
+		}
+		existingUser := entity.User{
+			ID:          "uid",
+			PhoneNumber: phoneNumber,
+		}
+		mockUserRepository.On("Get", filter).Return([]entity.User{existingUser}).Once()
+
+		generatedLoginVerificationID := "lp001"
+		mockIDGenerator.On("Generate").Return(generatedLoginVerificationID).Once()
+		mockIDGenerator.On("GenerateNumberCode", 6).Return(verificationCode).Once()
+
+		expectedMessage := verificationCode + " is your code verification."
+
+		mockSMSSender.On("Send", phoneNumber, expectedMessage).Return(nil).Once()
+
+		var expectedCurrentTimestamp int64
+		expectedCurrentTimestamp = 100
+		mockTimer.On("CurrentTimestamp").Return(expectedCurrentTimestamp)
+		expectedExpiredTimestamp := expectedCurrentTimestamp + 300
+
+		expectedLoginVerificationToSave := entity.LoginVerification{
+			DeviceID:         deviceID,
+			PhoneNumber:      phoneNumber,
+			UserID:           existingUser.ID,
+			ID:               generatedLoginVerificationID,
+			ExpiredTimestamp: expectedExpiredTimestamp,
+			VerificationCode: verificationCode,
+		}
+		mockLoginVerificationRepository.On("Save", expectedLoginVerificationToSave).Return(nil).Once()
+
+		err := u.LoginBySMS(phoneNumber, deviceID)
+		mockUserRepository.AssertCalled(t, "Get", filter)
+		mockUserRepository.AssertNotCalled(t, "Save", existingUser)
 		mockLoginVerificationRepository.AssertCalled(t, "Save", expectedLoginVerificationToSave)
 		mockSMSSender.AssertCalled(t, "Send", phoneNumber, expectedMessage)
 
