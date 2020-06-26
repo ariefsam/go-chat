@@ -9,4 +9,5 @@ type Usecase struct {
 	IDGenerator                 dependency.IDGenerator
 	SMSSender                   dependency.SMSSender
 	Timer                       dependency.Timer
+	TokenUserService            dependency.TokenUserService
 }
