@@ -126,6 +126,14 @@ func TestChatRepository(t *testing.T) {
 			getChat := chatRepository.Get(filter)
 			assert.Equal(t, chats2[:len(chats2)-1], getChat)
 		})
+
+		t.Run("Testing get chat id in group with before id limit 1", func(t *testing.T) {
+			var limit int
+			limit = 1
+			filter := entity.FilterChat{ReceiverID: &chats2[0].ReceiverID, BeforeID: &chats2[2].ID, Limit: &limit}
+			getChat := chatRepository.Get(filter)
+			assert.Equal(t, chats2[1:len(chats2)-1], getChat)
+		})
 	})
 
 }

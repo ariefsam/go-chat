@@ -2,6 +2,7 @@ package repository
 
 import (
 	"log"
+	"reflect"
 
 	"github.com/ariefsam/go-chat/entity"
 	"github.com/jinzhu/copier"
@@ -88,11 +89,20 @@ func (c *Chat) Get(filter entity.FilterChat) (chats []entity.Chat) {
 
 	var chatModels []chatModel
 
-	db.Limit(limit).Find(&chatModels)
+	db.Order("id desc").Limit(limit).Find(&chatModels)
 
+	reverseSlice(chatModels)
 	copier.Copy(&chats, &chatModels)
 
 	return
+}
+
+func reverseSlice(s interface{}) {
+	size := reflect.ValueOf(s).Len()
+	swap := reflect.Swapper(s)
+	for i, j := 0, size-1; i < j; i, j = i+1, j-1 {
+		swap(i, j)
+	}
 }
 
 func (c *Chat) Flush() (err error) {
