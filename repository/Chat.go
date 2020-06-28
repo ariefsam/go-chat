@@ -38,7 +38,7 @@ func (c *Chat) Save(chat entity.Chat) (err error) {
 	var cm, temp chatModel
 	copier.Copy(&cm, &chat)
 
-	db, err := c.connect()
+	db, err := connect(c)
 	defer db.Close()
 	if err != nil {
 		return
@@ -61,7 +61,7 @@ func (c *Chat) Save(chat entity.Chat) (err error) {
 }
 
 func (c *Chat) Get(filter entity.FilterChat) (chats []entity.Chat) {
-	db, err := c.connect()
+	db, err := connect(c)
 	if err != nil {
 		return
 	}
@@ -97,7 +97,7 @@ func (c *Chat) Get(filter entity.FilterChat) (chats []entity.Chat) {
 }
 
 func (c *Chat) Flush() (err error) {
-	db, err := c.connect()
+	db, err := connect(c)
 	if err != nil {
 		return
 	}
@@ -109,7 +109,7 @@ func (c *Chat) Flush() (err error) {
 func (c *Chat) AutoMigrate() {
 	var chatModel chatModel
 
-	db, err := c.connect()
+	db, err := connect(c)
 	if err != nil {
 		return
 	}
