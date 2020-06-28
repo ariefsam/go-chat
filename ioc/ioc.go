@@ -11,12 +11,16 @@ import (
 func Usecase() usecase.Usecase {
 	var u usecase.Usecase
 	chat := repository.Chat{}
-	copier.Copy(&chat, configuration.Config.MySQL)
+	copier.Copy(&chat, &configuration.Config.MySQL)
 	u.ChatRepository = &chat
 	channelRepository := repository.Channel{}
-	copier.Copy(&channelRepository, configuration.Config.MySQL)
+	copier.Copy(&channelRepository, &configuration.Config.MySQL)
 	u.ChannelRepository = &channelRepository
 
 	u.IDGenerator = &implementation.IDGenerator{}
+
+	loginVerificationRepository := repository.LoginVerification{}
+	copier.Copy(&loginVerificationRepository, &configuration.Config.MySQL)
+	u.LoginVerificationRepository = &loginVerificationRepository
 	return u
 }
