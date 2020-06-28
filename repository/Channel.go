@@ -1,5 +1,10 @@
 package repository
 
+import (
+	"github.com/ariefsam/go-chat/entity"
+	"github.com/jinzhu/copier"
+)
+
 type Channel struct {
 	Host         string
 	Username     string
@@ -39,4 +44,55 @@ func (c *Channel) AutoMigrate() {
 	db.AutoMigrate(&cm)
 
 	db.Close()
+}
+
+func (c *Channel) Save(channel entity.Channel) (err error) {
+	db, err := connect(c)
+	if err != nil {
+		return
+	}
+	defer db.Close()
+	var model, cm channelModel
+	copier.Copy(&cm, &channel)
+	db.Where("channel_id=?", channel.ID).Take(&model)
+
+	if model.MySQLID == 0 {
+		if err = db.Create(&cm).Error; err != nil {
+			return
+		}
+	} else {
+		cm.MySQLID = model.MySQLID
+		if err = db.Model(&cm).Update(&cm).Error; err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+func (c *Channel) Get(filter entity.FilterChannel) (channels []entity.Channel) {
+	var cm []channelModel
+	db, err := connect(c)
+	if err != nil {
+		return
+	}
+	defer db.Close()
+	var limit int
+	if filter.Limit == nil {
+		limit = 10
+	} else if limit > 10000 {
+		limit = 10000
+	} else {
+		limit = *filter.Limit
+	}
+	if filter.ID != nil {
+		db = db.Where("channel_id=?", *filter.ID)
+	}
+	if filter.Name != nil {
+		db = db.Where("name LIKE ?", "%"+*filter.Name+"%")
+	}
+	db.Limit(limit).Find(&cm)
+
+	copier.Copy(&channels, &cm)
+	return
 }

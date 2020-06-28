@@ -65,6 +65,7 @@ func (c *Chat) Get(filter entity.FilterChat) (chats []entity.Chat) {
 	if err != nil {
 		return
 	}
+	defer db.Close()
 	var limit int
 	if filter.Limit == nil {
 		limit = 10

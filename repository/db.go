@@ -1,11 +1,16 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/jinzhu/copier"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
+func init() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+}
 func connect(connection interface{}) (db *gorm.DB, err error) {
 	type Connection struct {
 		Host         string

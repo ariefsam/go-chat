@@ -1,6 +1,7 @@
 package entity
 
 type FilterChannel struct {
-	ID   *string
-	Name *string
+	ID    *string
+	Name  *string
+	Limit *int
 }
