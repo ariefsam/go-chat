@@ -2,21 +2,34 @@ package repository
 
 import (
 	"log"
+	"sync"
 
 	"github.com/ariefsam/go-chat/entity"
 	"github.com/jinzhu/copier"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
+var listMutex []sync.Mutex
+var counterMutex sync.Mutex
+
+var currentMutex, totalMutex int
+var insertedChat int
+
 func init() {
+	totalMutex = 10
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	listMutex = make([]sync.Mutex, totalMutex)
+	// log.Println(listMutex)
 
 }
 
 type Chat struct {
-	Host         string
-	Username     string
-	Password     string
-	DatabaseName string
+	Host           string
+	Username       string
+	Password       string
+	DatabaseName   string
+	connectionPool *gorm.DB
 }
 
 type chatModel struct {
@@ -34,13 +47,23 @@ func (chatModel) TableName() string {
 }
 
 func (c *Chat) Save(chat entity.Chat) (err error) {
+	counterMutex.Lock()
+	listMutex[currentMutex].Lock()
+	defer listMutex[currentMutex].Unlock()
+	currentMutex++
+
+	if currentMutex >= totalMutex {
+		currentMutex = 0
+	}
+	counterMutex.Unlock()
 
 	var cm, temp chatModel
 	copier.Copy(&cm, &chat)
 
-	db, err := connect(c)
+	db, err := c.connect()
 	defer db.Close()
 	if err != nil {
+		log.Println(err)
 		return
 	}
 
@@ -57,11 +80,14 @@ func (c *Chat) Save(chat entity.Chat) (err error) {
 		}
 	}
 
+	insertedChat++
+	// log.Println(insertedChat)
+
 	return
 }
 
 func (c *Chat) Get(filter entity.FilterChat) (chats []entity.Chat) {
-	db, err := connect(c)
+	db, err := c.connect()
 	if err != nil {
 		return
 	}
@@ -114,8 +140,14 @@ func (c *Chat) AutoMigrate() {
 	if err != nil {
 		return
 	}
+	defer db.Close()
 
 	db.AutoMigrate(&chatModel)
 
-	db.Close()
+}
+
+func (c *Chat) connect() (db *gorm.DB, err error) {
+	db, err = connect(c)
+	return
+
 }

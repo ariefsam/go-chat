@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/ariefsam/go-chat/entity"
 	"github.com/jinzhu/copier"
 )
@@ -49,6 +51,7 @@ func (c *Channel) AutoMigrate() {
 func (c *Channel) Save(channel entity.Channel) (err error) {
 	db, err := connect(c)
 	if err != nil {
+		log.Println(err)
 		return
 	}
 	defer db.Close()

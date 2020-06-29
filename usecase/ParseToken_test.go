@@ -24,5 +24,4 @@ func TestParseToken(t *testing.T) {
 	isValid, user := u.ParseToken(token)
 	assert.Equal(t, expectedIsValid, isValid)
 	assert.Equal(t, expectedUser, user)
-
 }
