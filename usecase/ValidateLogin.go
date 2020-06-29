@@ -14,7 +14,6 @@ func (u *Usecase) ValidateLogin(phoneNumber string, deviceID string, verificatio
 			users[0].IsPhoneVerified = true
 			u.UserRepository.Save(users[0])
 		}
-
 	}
 	return
 }

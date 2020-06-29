@@ -14,7 +14,6 @@ var listMutex []sync.Mutex
 var counterMutex sync.Mutex
 
 var currentMutex, totalMutex int
-var insertedChat int
 
 func init() {
 	totalMutex = 10
@@ -25,11 +24,10 @@ func init() {
 }
 
 type Chat struct {
-	Host           string
-	Username       string
-	Password       string
-	DatabaseName   string
-	connectionPool *gorm.DB
+	Host         string
+	Username     string
+	Password     string
+	DatabaseName string
 }
 
 type chatModel struct {
@@ -79,9 +77,6 @@ func (c *Chat) Save(chat entity.Chat) (err error) {
 			return
 		}
 	}
-
-	insertedChat++
-	// log.Println(insertedChat)
 
 	return
 }
