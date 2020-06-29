@@ -5,6 +5,7 @@ import (
 	"github.com/ariefsam/go-chat/implementation"
 	"github.com/ariefsam/go-chat/repository"
 	"github.com/ariefsam/go-chat/sms_sender"
+	"github.com/ariefsam/go-chat/token_user"
 	"github.com/ariefsam/go-chat/usecase"
 	"github.com/jinzhu/copier"
 )
@@ -30,6 +31,10 @@ func Usecase() usecase.Usecase {
 
 	u.SMSSender = &sms_sender.SMSSender{}
 	u.Timer = &implementation.Timer{}
+	tokenService := token_user.Token{
+		Secret: configuration.Config.JWTSecret,
+	}
+	u.TokenUserService = &tokenService
 
 	return u
 }

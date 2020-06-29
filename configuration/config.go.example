@@ -16,4 +16,5 @@ func init() {
 	Config.MySQL.Host = "127.0.0.1"
 	Config.MySQL.Password = "dbpassword"
 	Config.MySQL.Username = "dbusername"
+	Config.JWTSecret = []byte("codeSecret")
 }
