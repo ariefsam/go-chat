@@ -33,4 +33,33 @@ func TestUser(t *testing.T) {
 	if len(users) == 1 {
 		assert.Equal(t, user, users[0])
 	}
+
+	t.Run("Test search by phone number", func(t *testing.T) {
+		user = entity.User{
+			ID:          "id002",
+			Name:        "xx2",
+			PhoneNumber: "12623232",
+		}
+		err = userRepository.Save(user)
+		filter = entity.FilterUser{
+			PhoneNumber: &user.PhoneNumber,
+		}
+		getUsers := userRepository.Get(filter)
+		assert.Equal(t, 1, len(getUsers))
+		if len(getUsers) == 1 {
+			assert.Equal(t, user, getUsers[0])
+		}
+
+	})
+
+	t.Run("Error if same phone number saved from different id", func(t *testing.T) {
+		user = entity.User{
+			ID:          "id003",
+			Name:        "xx2",
+			PhoneNumber: "12623232",
+		}
+		err = userRepository.Save(user)
+		assert.Error(t, err)
+
+	})
 }

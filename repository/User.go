@@ -20,7 +20,7 @@ type userModel struct {
 	ID              string `gorm:"column:user_id;unique_index"`
 	Username        string
 	Name            string
-	PhoneNumber     string
+	PhoneNumber     string `gorm:"column:phone_number;unique_index"`
 	IsPhoneVerified bool
 }
 
@@ -73,6 +73,9 @@ func (u *User) Get(filter entity.FilterUser) (listUsers []entity.User) {
 		db = db.Where("user_id=?", *filter.UserID)
 	}
 
+	if filter.PhoneNumber != nil {
+		db = db.Where("phone_number=?", *filter.PhoneNumber)
+	}
 	var users []userModel
 
 	db.Order("id desc").Limit(limit).Find(&users)

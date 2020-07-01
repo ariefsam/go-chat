@@ -24,7 +24,7 @@ func main() {
 	for i := 0; i <= 10000; i++ {
 		c := entity.Chat{
 			ID:      u.IDGenerator.Generate(),
-			Message: "Ini test message",
+			Message: "This is test message",
 		}
 		wg.Add(1)
 		go func() {
@@ -37,6 +37,18 @@ func main() {
 	wg.Wait()
 	log.Println("Done waiting")
 	end := time.Now().Unix()
-	log.Println("Waktu proses: ", (end - start), "detik")
+	log.Println("Procesing time: ", (end - start), "detik")
+
+	for i := 0; i <= 10000; i++ {
+
+		wg.Add(1)
+		go func() {
+			filter := entity.FilterChat{}
+			users := u.ChatRepository.Get(filter)
+			log.Println(users)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
 
 }
