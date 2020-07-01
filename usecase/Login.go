@@ -9,6 +9,7 @@ func (u *Usecase) LoginBySMS(phoneNumber string, deviceID string) (err error) {
 	filter := entity.FilterUser{
 		PhoneNumber: &phoneNumber,
 	}
+
 	checkUsers := u.UserRepository.Get(filter)
 
 	if len(checkUsers) == 0 {

@@ -76,6 +76,8 @@ func TestLogin(t *testing.T) {
 
 	t.Run("ExistingUser user", func(t *testing.T) {
 		mockIDGenerator = mockdependency.IDGenerator{}
+		mockUserRepository = mockdependency.UserRepository{}
+		u.UserRepository = &mockUserRepository
 		filter := entity.FilterUser{
 			PhoneNumber: &phoneNumber,
 		}

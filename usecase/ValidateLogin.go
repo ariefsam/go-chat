@@ -7,7 +7,7 @@ func (u *Usecase) ValidateLogin(phoneNumber string, deviceID string, verificatio
 	if len(verificationLogin) > 0 {
 		isValid = true
 		filter := entity.FilterUser{
-			UserID: &verificationLogin[0].ID,
+			UserID: &verificationLogin[0].UserID,
 		}
 		users := u.UserRepository.Get(filter)
 		if len(users) > 0 {

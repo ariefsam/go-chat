@@ -12,16 +12,25 @@ import (
 func TestValidateLogin(t *testing.T) {
 	var u usecase.Usecase
 	var mockLoginVerification mockdependency.LoginVerificationRepository
+
 	u.LoginVerificationRepository = &mockLoginVerification
 	var mockTimer mockdependency.Timer
 	u.Timer = &mockTimer
+	var mockUserRepository mockdependency.UserRepository
+	u.UserRepository = &mockUserRepository
 
 	phoneNumber := "62852132373"
 	deviceID := "xxxdevid"
 	verificationCode := "778899"
 	validateBefore := int64(15000)
 	currentTime := int64(14000)
+	userID := "001"
 	mockTimer.On("CurrentTimestamp").Return(currentTime)
+	expectedUser := entity.User{
+		ID:              userID,
+		PhoneNumber:     phoneNumber,
+		IsPhoneVerified: true,
+	}
 
 	t.Run("login verification found", func(t *testing.T) {
 		expectedLoginVerification := entity.LoginVerification{
@@ -30,8 +39,17 @@ func TestValidateLogin(t *testing.T) {
 			DeviceID:         deviceID,
 			ExpiredTimestamp: validateBefore,
 			VerificationCode: verificationCode,
+			UserID:           userID,
 		}
 		mockLoginVerification.On("Get", phoneNumber, deviceID, currentTime, &verificationCode).Return([]entity.LoginVerification{expectedLoginVerification}).Once()
+
+		filterUser := entity.FilterUser{
+			UserID: &expectedLoginVerification.UserID,
+		}
+
+		mockUserRepository.On("Get", filterUser).Return([]entity.User{expectedUser})
+		mockUserRepository.On("Save", expectedUser).Return(nil)
+
 		isValid := u.ValidateLogin(phoneNumber, deviceID, verificationCode)
 		assert.True(t, isValid)
 	})
