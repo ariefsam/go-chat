@@ -16,7 +16,7 @@ var counterMutex sync.Mutex
 var currentMutex, totalMutex int
 
 func init() {
-	totalMutex = 2
+	totalMutex = 100
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	listMutex = make([]sync.Mutex, totalMutex)
 	// log.Println(listMutex)

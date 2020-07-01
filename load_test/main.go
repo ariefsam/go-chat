@@ -39,13 +39,15 @@ func main() {
 	end := time.Now().Unix()
 	log.Println("Procesing time: ", (end - start), "detik")
 
-	for i := 0; i <= 10000; i++ {
+	for i := 0; i <= 100; i++ {
 
 		wg.Add(1)
 		go func() {
 			filter := entity.FilterChat{}
 			users := u.ChatRepository.Get(filter)
-			log.Println(users)
+			if len(users) > 0 {
+				log.Println(users[0].ID)
+			}
 			wg.Done()
 		}()
 	}
