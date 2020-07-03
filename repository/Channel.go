@@ -80,14 +80,7 @@ func (c *Channel) Get(filter entity.FilterChannel) (channels []entity.Channel) {
 		return
 	}
 	defer db.Close()
-	var limit int
-	if filter.Limit == nil {
-		limit = 10
-	} else if *filter.Limit > 10000 {
-		limit = 10000
-	} else {
-		limit = *filter.Limit
-	}
+	limit := filterLimit(filter.Limit)
 	if filter.ID != nil {
 		db = db.Where("channel_id=?", *filter.ID)
 	}
