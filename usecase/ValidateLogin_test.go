@@ -50,14 +50,16 @@ func TestValidateLogin(t *testing.T) {
 		mockUserRepository.On("Get", filterUser).Return([]entity.User{expectedUser})
 		mockUserRepository.On("Save", expectedUser).Return(nil)
 
-		isValid := u.ValidateLogin(phoneNumber, deviceID, verificationCode)
+		isValid, user := u.ValidateLogin(phoneNumber, deviceID, verificationCode)
 		assert.True(t, isValid)
+		assert.Equal(t, expectedUser, user)
 	})
 
 	t.Run("login verification not found", func(t *testing.T) {
 		mockLoginVerification.On("Get", phoneNumber, deviceID, currentTime, &verificationCode).Return([]entity.LoginVerification{}).Once()
-		isValid := u.ValidateLogin(phoneNumber, deviceID, verificationCode)
+		isValid, _ := u.ValidateLogin(phoneNumber, deviceID, verificationCode)
 		assert.False(t, isValid)
+
 	})
 
 }

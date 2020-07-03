@@ -8,7 +8,11 @@
 </template>
 
 <script>
+import { getToken } from "pages/deviceID.js";
 export default {
-  name: 'PageIndex'
+  name: 'PageIndex',
+  mounted(){
+    console.log(getToken())
+  }
 }
 </script>

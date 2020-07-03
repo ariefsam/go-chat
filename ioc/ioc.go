@@ -36,5 +36,9 @@ func Usecase() usecase.Usecase {
 	}
 	u.TokenUserService = &tokenService
 
+	var userRepository repository.User
+	copier.Copy(&userRepository, &configuration.Config.MySQL)
+	u.UserRepository = &userRepository
+
 	return u
 }

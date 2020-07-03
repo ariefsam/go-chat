@@ -90,7 +90,7 @@ func (c *Chat) Get(filter entity.FilterChat) (chats []entity.Chat) {
 	var limit int
 	if filter.Limit == nil {
 		limit = 10
-	} else if limit > 10000 {
+	} else if *filter.Limit > 10000 {
 		limit = 10000
 	} else {
 		limit = *filter.Limit

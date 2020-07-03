@@ -83,7 +83,7 @@ func (c *Channel) Get(filter entity.FilterChannel) (channels []entity.Channel) {
 	var limit int
 	if filter.Limit == nil {
 		limit = 10
-	} else if limit > 10000 {
+	} else if *filter.Limit > 10000 {
 		limit = 10000
 	} else {
 		limit = *filter.Limit
