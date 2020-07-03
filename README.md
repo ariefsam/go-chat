@@ -12,7 +12,7 @@ go build && ./go-chat
 
 # Using Go-Chat with custom Implementation
 ```go
-package repository
+package main
 
 import (
     "log"
@@ -20,22 +20,25 @@ import (
     "github.com/ariefsam/go-chat/entity"
 	"github.com/ariefsam/go-chat/usecase"
 )
-var u usecase.Usecase
-// Your Implementation for Chat Repository
-// Must implement usecase/dependency/ChatRepository interface
-chat := yourpackage.Chat{}
-u.ChatRepository = &chat
 
-inputChat := entity.Chat{
-		SenderID:   "xxx",
-		Timestamp:  34400,
-		ChatType:   "group",
-		ReceiverID: "groupid",
-		Message:    "Testing Message",
-    }
-    
-savedChat, err := u.AddChat(inputChat)
-log.Println(savedChat,err)
+func main() {
+    var u usecase.Usecase
+    // Your Implementation for Chat Repository
+    // Must implement usecase/dependency/ChatRepository interface
+    chat := yourpackage.Chat{}
+    u.ChatRepository = &chat
+
+    inputChat := entity.Chat{
+            SenderID:   "xxx",
+            Timestamp:  34400,
+            ChatType:   "group",
+            ReceiverID: "groupid",
+            Message:    "Testing Message",
+        }
+        
+    savedChat, err := u.AddChat(inputChat)
+    log.Println(savedChat,err)
+}
 ```
 
 # Telegram Group
