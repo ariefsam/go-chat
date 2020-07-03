@@ -15,8 +15,10 @@ go build && ./go-chat
 package repository
 
 import (
-	"log"
+    "log"
     "yourpackage"
+    "github.com/ariefsam/go-chat/entity"
+	"github.com/ariefsam/go-chat/usecase"
 )
 var u usecase.Usecase
 // Your Implementation for Chat Repository
