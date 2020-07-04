@@ -5,15 +5,15 @@
         <q-input
           class="q-ma-md"
           filled
-          v-model="phoneNumber"
+          v-model="name"
           type="tel"
-          label="Phone Number"
+          label="Channel Name"
           placeholder="62852123456"
           stack-label
         />
         <q-btn type="submit" class="q-ma-md" color="teal">
           <q-icon left name="map" />
-          <div>Login</div>
+          <div>Create</div>
         </q-btn>
       </q-form>
     </div>
@@ -21,12 +21,12 @@
 </template>
 
 <script>
-import { getDeviceID, setPhoneNumber } from "pages/deviceID.js";
+import { getDeviceID, setPhoneNumber, getToken } from "pages/deviceID.js";
 export default {
   name: "CreateChannel",
   data() {
     return {
-      phoneNumber: "",
+      name: "",
       dataSubmit: {}
     };
   },
@@ -37,16 +37,17 @@ export default {
     onSubmit() {
       
       this.dataSubmit = {
-        phoneNumber: this.phoneNumber,
-        deviceID: getDeviceID()
+        name: this.name,
+        token: getToken()
       };
       setPhoneNumber(this.phoneNumber)
 
       var vm = this;
       this.$axios
-        .post("/api/login", this.dataSubmit)
+        .post("/api/channel/create", this.dataSubmit)
         .then(function(response) {
-          vm.$router.push("/login/verify")
+          channelID=response.data.channel_id;
+          vm.$router.push("/channel/" + channelID)
         })
         .catch(function(error) {
           console.log(error);

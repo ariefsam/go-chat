@@ -27,7 +27,7 @@ func (t *Token) Create(user entity.User) (tokenString string) {
 	claims := MyCustomClaims{
 		user,
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Unix(),
+			ExpiresAt: time.Now().Unix() + 604800,
 			Issuer:    "go-chat",
 		},
 	}
@@ -42,11 +42,16 @@ func (t *Token) Parse(tokenString string) (isValid bool, user entity.User) {
 		return t.Secret, nil
 	})
 
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 	if claims, ok := token.Claims.(*MyCustomClaims); ok && token.Valid {
 		isValid = true
 		user = claims.User
 	} else {
-		log.Println(err)
+
 	}
 	return
 
