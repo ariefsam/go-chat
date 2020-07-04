@@ -4,6 +4,9 @@ Golang Chat is modular chat based on Uncle Bob's Clean Architecture principle.
 # Clean Architecture
 Focus on usecase. All dependency interface located in folder usercase/dependency. We can change dependency implementation (database, sms sender, token generator, etc) via ioc.
 
+# Is Go-Chat Production Ready?
+Using default implementation: No. You can use Go-Chat usecase, then implement dependency by Yours. 
+
 # Using Go-Chat with default Implementation
 Copy config.go.example to config.go in folder configuration.
 ```bash
