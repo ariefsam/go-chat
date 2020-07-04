@@ -36,6 +36,7 @@ func Serve() {
 	r.HandleFunc("/api/login", LoginHandler).Methods("POST", "GET")
 	r.HandleFunc("/api/login/verify", VerifyLoginHandler).Methods("POST", "GET")
 	r.HandleFunc("/api/channel/create", CreateChannelHandler).Methods("POST", "GET")
+	r.HandleFunc("/api/channel/search", SearchChannelHandler).Methods("POST", "GET")
 
 	r.PathPrefix("/").Handler(quasarHandler())
 

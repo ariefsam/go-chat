@@ -31,6 +31,36 @@
         <q-item-label header class="text-grey-8">Essential Links</q-item-label>
         <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       </q-list>
+
+      <q-input
+        bottom-slots
+        v-model="searchChannel"
+        label="Search Channel"
+        counter
+        maxlength="50"
+        @input="onInputSearchChannel"
+      >
+        <template v-slot:before>
+          <q-icon name="flight_takeoff" />
+        </template>
+
+        <template v-slot:append>
+          <q-icon
+            v-if="searchChannel !== ''"
+            name="close"
+            @click="searchChannel = ''"
+            class="cursor-pointer"
+          />
+          <q-icon name="search" />
+        </template>
+
+        <template v-slot:hint>Field hint</template>
+      </q-input>
+
+      <q-list>
+        <q-item-label header class="text-grey-8">Channels</q-item-label>
+        <EssentialLink v-for="link in channelLinks" :key="link.title" v-bind="link" />
+      </q-list>
     </q-drawer>
 
     <q-page-container>
@@ -41,7 +71,7 @@
 
 <script>
 import EssentialLink from "components/EssentialLink.vue";
-
+import { getToken } from "pages/deviceID.js";
 export default {
   name: "MainLayout",
 
@@ -51,6 +81,8 @@ export default {
 
   data() {
     return {
+      searchChannel: "",
+      awaitingSearch: false,
       leftDrawerOpen: false,
       essentialLinks: [
         {
@@ -59,8 +91,50 @@ export default {
           icon: "school",
           link: "/login"
         }
-      ]
+      ],
+      channelLinks: []
     };
+  },
+
+  methods: {
+    onInputSearchChannel() {
+      var vm = this;
+      
+      if (!this.awaitingSearch) {
+        setTimeout(() => {
+          
+          vm.searchChannelAPI();
+          // console.log(vm)
+          this.awaitingSearch = false;
+          
+        }, 1000); // 1 sec delay
+      }
+      this.awaitingSearch = true;
+    },
+    searchChannelAPI() {
+      this.dataSubmit = {
+        name: this.searchChannel,
+        token: getToken()
+      };
+
+      var vm = this;
+      this.$axios
+        .post("/api/channel/search", this.dataSubmit)
+        .then(function(response) {
+          var items = [];
+          response.data.channels.forEach(element => {
+            items.push({
+              title: element.Name,
+              link: "/channel/detail/" + element.ID,
+            })
+            vm.channelLinks=items
+          });
+          
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
   }
 };
 </script>
