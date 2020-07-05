@@ -38,6 +38,7 @@ func Serve() {
 	r.HandleFunc("/api/channel/create", CreateChannelHandler).Methods("POST", "GET")
 	r.HandleFunc("/api/channel/search", SearchChannelHandler).Methods("POST", "GET")
 	r.HandleFunc("/api/channel/detail", DetailChannelHandler).Methods("POST", "GET")
+	r.HandleFunc("/api/channel/listen/{channelID}", ListenChannelHandler)
 	r.HandleFunc("/api/channel/chat/create", ChannelCreateChatHandler).Methods("POST", "GET")
 
 	r.PathPrefix("/").Handler(quasarHandler())

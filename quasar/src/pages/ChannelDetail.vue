@@ -8,7 +8,7 @@
           v-bind="chat"
           :key="chat.ID"
           :name="chat.SenderName"
-          avatar="./assets/quasar-log-full.svg"
+          avatar="~assets/quasar-logo-full.svg"
           :text="[
           chat.Message
         ]"
@@ -19,10 +19,10 @@
       </q-list>
     </div>
     <div class="row">
-      <q-input bottom-slots v-model="text" label="Label" counter maxlength="12">
+      <q-input bottom-slots v-model="text" label="Label" counter maxlength="100">
         <template v-slot:before>
           <q-avatar>
-            <img src="https://cdn.quasar.dev/img/avatar5.jpg" />
+            <img src="~assets/quasar-logo-full.svg" />
           </q-avatar>
         </template>
 
@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import ReconnectingWebSocket from "reconnecting-websocket";
+
 import { getToken } from "pages/deviceID.js";
 export default {
   name: "CreateChannel",
@@ -52,6 +54,10 @@ export default {
       channelID: ""
     };
   },
+  deactivated: function() {
+    alert("pindah halaman" + this.channelID)
+  },
+  
   mounted() {
     var channelID = this.$route.params.channelID;
     this.channelID = channelID;
@@ -73,6 +79,21 @@ export default {
       .catch(function(error) {
         console.log(error);
       });
+
+    const rws = new ReconnectingWebSocket(
+      "ws://localhost:8889/api/channel/listen/" + this.channelID
+    );
+
+    rws.addEventListener("open", () => {
+      rws.send('{"token": "' + getToken() + '"');
+    });
+
+    rws.addEventListener("message", msg => {
+      console.log(vm.chats);
+      console.log(msg.data);
+
+      vm.chats.push(JSON.parse(msg.data));
+    });
   },
   methods: {
     sendMessage() {
@@ -87,7 +108,7 @@ export default {
         .post("/api/channel/chat/create", this.dataSubmit)
         .then(function(response) {
           if (response.data.chat) {
-            vm.text=""
+            vm.text = "";
           }
         })
         .catch(function(error) {

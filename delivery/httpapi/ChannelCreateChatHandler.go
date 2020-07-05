@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -66,9 +67,13 @@ func ChannelCreateChatHandler(w http.ResponseWriter, r *http.Request) {
 	savedChat, err := usecase.AddChat(chat)
 	if err != nil {
 		response["error"] = "Bad gateway"
+		log.Println(err)
 		JSONView(w, response, http.StatusBadGateway)
 		return
 	} else {
+		temp, _ := json.Marshal(chat)
+		channelHub := getChannelHub(channelID)
+		channelHub.broadcast <- temp
 		response["chat"] = savedChat
 	}
 	JSONView(w, response, http.StatusOK)
