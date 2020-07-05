@@ -7,7 +7,8 @@ const routes = [
       { path: '', component: () => import('pages/Index.vue') },
       { path: '/login', component: () => import('pages/Login.vue') },
       { path: '/login/verify', component: () => import('pages/VerifyLoginCode.vue') },
-      { path: '/channel/create', component: () => import('pages/CreateChannel.vue') }
+      { path: '/channel/create', component: () => import('pages/CreateChannel.vue') },
+      { path: '/channel/detail/:channelID', component: () => import('pages/ChannelDetail.vue') }
     ]
   },
 

@@ -26,6 +26,7 @@ func TestChatRepository(t *testing.T) {
 	chat := entity.Chat{
 		ID:         "xi123",
 		SenderID:   "xxx1",
+		SenderName: "Arief",
 		Timestamp:  34400,
 		ChatType:   "group",
 		ReceiverID: "groupid",

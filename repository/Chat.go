@@ -34,6 +34,7 @@ type chatModel struct {
 	MySQLID    int    `gorm:"column:id;PRIMARY_KEY;AUTO_INCREMENT"`
 	ID         string `gorm:"column:chat_id;unique_index"`
 	SenderID   string
+	SenderName string
 	ReceiverID string
 	ChatType   string
 	Message    string `gorm:"type:text"`
