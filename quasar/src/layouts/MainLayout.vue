@@ -59,7 +59,7 @@
 
       <q-list>
         <q-item-label header class="text-grey-8">Channels</q-item-label>
-        <EssentialLink v-for="link in channelLinks" :key="link.title" v-bind="link" />
+        <EssentialLink v-for="link in channelLinks" :key="link.id" v-bind="link" />
       </q-list>
     </q-drawer>
 
@@ -124,6 +124,7 @@ export default {
           var items = [];
           response.data.channels.forEach(element => {
             items.push({
+              id: element.ID,
               title: element.Name,
               link: "/channel/detail/" + element.ID,
             })

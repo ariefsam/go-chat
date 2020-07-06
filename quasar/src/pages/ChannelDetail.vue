@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import ReconnectingWebSocket from "reconnecting-websocket";
+import { connect } from "pages/channelwebsocket.js";
 
 import { getToken } from "pages/deviceID.js";
 export default {
@@ -51,13 +51,14 @@ export default {
     return {
       chats: [],
       text: "",
-      channelID: ""
+      channelID: "",
+      rws: null
     };
   },
   deactivated: function() {
-    alert("pindah halaman" + this.channelID)
+    alert("pindah halaman" + this.channelID);
   },
-  
+
   mounted() {
     var channelID = this.$route.params.channelID;
     this.channelID = channelID;
@@ -80,7 +81,7 @@ export default {
         console.log(error);
       });
 
-    const rws = new ReconnectingWebSocket(
+    var rws = connect(
       "ws://localhost:8889/api/channel/listen/" + this.channelID
     );
 
@@ -94,6 +95,23 @@ export default {
 
       vm.chats.push(JSON.parse(msg.data));
     });
+  },
+  beforeRouteLeave(to, from, next) {
+    console.log("w");
+    if (this.rws != null) {
+      this.rws.close();
+      console.log("Disconnected ws");
+    }
+  },
+  updated() {
+    //  console.log(this.$route)
+    // this.$route.listen(newLocation => {
+    // console.log(newLocation);
+    // if (this.rws != null) {
+    //   this.rws.close();
+    //   console.log("Disconnected ws");
+    // }
+    // });
   },
   methods: {
     sendMessage() {

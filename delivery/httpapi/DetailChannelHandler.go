@@ -45,6 +45,9 @@ func DetailChannelHandler(w http.ResponseWriter, r *http.Request) {
 	filterChat := entity.FilterChat{
 		ReceiverID: &channelID,
 	}
+	var limit int
+	limit = 100
+	filterChat.Limit = &limit
 	chats := usecase.GetChat(filterChat)
 	response["chats"] = chats
 	JSONView(w, response, http.StatusOK)
